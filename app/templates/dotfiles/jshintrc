@@ -1,0 +1,10 @@
+{
+    "latedef": true,
+    "newcap": true,
+    "undef": true,
+    "browser": true,
+    "jquery": true,
+    "node": true,
+    "undef": false,
+    "loopfunc": false
+}
