@@ -1,7 +1,7 @@
 'use strict';
 var util = require('util');
 var path = require('path');
-var fs = require('fs');
+var fs = require('fs-extra');
 var wiredep = require('wiredep');
 var yeoman = require('yeoman-generator');
 
@@ -18,17 +18,22 @@ var AppBasicGenerator = module.exports = function (args, options, config) {
         this.installDependencies({ skipInstall: options['skip-install'], callback: function () {
             this.emit('dependenciesInstalled');
         }.bind(this)});
+    });
 
-        this.on('dependenciesInstalled', function () {
-            wiredep({
-                directory: this.destDir.vendor,
-                bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
-                exclude: [/sass-bootstrap/],
-                ignorePath: 'public/',
-                src: this.baseDest + 'index.html'
-            });
+    this.on('dependenciesInstalled', function wireDependencies() {
+        wiredep({
+            directory: this.destDir.vendor,
+            bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
+            exclude: [/sass-bootstrap/],
+            ignorePath: this.baseDest,
+            src: this.baseDest + 'index.html'
         });
     });
+
+    this.on('dependenciesInstalled', function copyBootstrapFilesToSrc() {
+        var bootstrapTarget = this.sourceDir.styles + '/bootstrap';
+        fs.copy(process.cwd() + '/' + this.destDir.vendor + '/sass-bootstrap/lib', bootstrapTarget);
+    }.bind(this));
 };
 
 util.inherits(AppBasicGenerator, yeoman.generators.Base);
@@ -77,5 +82,5 @@ AppBasicGenerator.prototype.copyGrunt = function () {
 
 AppBasicGenerator.prototype.copyInitialFiles = function () {
     this.template('index.html', this.baseDest + 'index.html');
-    this.directory('styles', this.baseSrc + 'styles');
+    this.directory('styles', this.sourceDir.styles);
 };
