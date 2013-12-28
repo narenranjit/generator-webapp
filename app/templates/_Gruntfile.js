@@ -114,6 +114,18 @@ module.exports = function (grunt) {
             }
         },
 
+        'bower-install': {
+            target: {
+                // Point to the files that should be updated when
+                // you run `grunt bower-install`
+                src: ['index.html'],
+
+                cwd: '',
+                ignorePath: '',
+                exclude: [],
+                fileTypes: {}
+            }
+        },
         concat: {
 
         }

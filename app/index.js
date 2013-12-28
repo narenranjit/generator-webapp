@@ -3,7 +3,6 @@ var util = require('util');
 var path = require('path');
 var yeoman = require('yeoman-generator');
 
-
 var AppBasicGenerator = module.exports = function AppBasicGenerator(args, options, config) {
     yeoman.generators.Base.apply(this, arguments);
 
@@ -11,30 +10,12 @@ var AppBasicGenerator = module.exports = function AppBasicGenerator(args, option
     this.appname = this.appname || path.basename(process.cwd());
     this.appname = this._.camelize(this._.slugify(this._.humanize(this.appname)));
 
-    this.on('end', function () {
-        this.installDependencies({ skipInstall: options['skip-install'] });
-    });
-
     this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
 };
 
 util.inherits(AppBasicGenerator, yeoman.generators.Base);
 
-// AppBasicGenerator.prototype.askFor = function askFor() {
-//     var cb = this.async();
-
-//     var prompts = [{
-//         name: 'appname',
-//         message: 'What\'s your project called?'
-//     }];
-
-//     // this.prompt(prompts, function (props) {
-//     //     this.appname = props.appname;
-
-//     //     cb();
-//     // }.bind(this));
-// };
-AppBasicGenerator.prototype.setDefaults = function app() {
+AppBasicGenerator.prototype.setDefaults = function () {
     var baseSrc = 'src/';
     this.sourceDir = {
         scripts: baseSrc + 'scripts',
@@ -51,7 +32,7 @@ AppBasicGenerator.prototype.setDefaults = function app() {
     };
 };
 
-AppBasicGenerator.prototype.setupFolders = function app() {
+AppBasicGenerator.prototype.setupFolders = function () {
     this.mkdir('src');
     this.mkdir('src/templates');
     this.mkdir('src/styles');
@@ -63,34 +44,20 @@ AppBasicGenerator.prototype.setupFolders = function app() {
     this.mkdir('public/scripts');
 };
 
-AppBasicGenerator.prototype.copyTemplates = function app() {
+AppBasicGenerator.prototype.copyTemplates = function () {
     this.template('_package.json', 'package.json');
     this.template('_bower.json', 'bower.json');
 };
-AppBasicGenerator.prototype.copyDotFiles = function projectfiles() {
+AppBasicGenerator.prototype.copyDotFiles = function () {
     this.expand(__dirname + '/templates/dotfiles/*').forEach(function (path) {
         this.copy(path,  '.' + path.split('/').pop());
     }.bind(this));
 };
-AppBasicGenerator.prototype.copyGrunt = function projectfiles() {
+AppBasicGenerator.prototype.copyGrunt = function () {
     this.template('_Gruntfile.js', 'Gruntfile.js');
 };
 
-AppBasicGenerator.prototype._injectDependencies = function _injectDependencies() {
-    // var howToInstall = '\nAfter running `npm install & bower install`, inject your front end dependencies into' +
-    //     '\nyour HTML by running:' +
-    //     '\n' + chalk.yellow.bold('\n  grunt bower-install');
-
-    // if (this.options['skip-install']) {
-    //     console.log(howToInstall);
-    // }
-    // else {
-    //     wiredep({
-    //         directory: 'app/bower_components',
-    //         bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
-    //         ignorePath: 'app/',
-    //         htmlFile: 'app/index.html',
-    //         cssPattern: '<link rel="stylesheet" href="{{filePath}}">'
-    //     });
-    // }
+AppBasicGenerator.prototype.copyInitialFiles = function () {
+    this.template('index.html', 'index.html');
+    this.directory('styles', 'src/styles');
 };
