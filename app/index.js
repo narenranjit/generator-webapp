@@ -5,7 +5,7 @@ var fs = require('fs');
 var wiredep = require('wiredep');
 var yeoman = require('yeoman-generator');
 
-var AppBasicGenerator = module.exports = function AppBasicGenerator(args, options, config) {
+var AppBasicGenerator = module.exports = function (args, options, config) {
     yeoman.generators.Base.apply(this, arguments);
 
     this.argument('appname', { type: String, required: false });
@@ -51,15 +51,15 @@ AppBasicGenerator.prototype.setDefaults = function () {
 };
 
 AppBasicGenerator.prototype.setupFolders = function () {
-    this.mkdir(this.baseSrc);
-    this.mkdir(this.baseSrc + 'templates');
-    this.mkdir(this.baseSrc + 'styles');
-    this.mkdir(this.baseSrc + 'scripts');
+    var createDirs = function (parent, dirList) {
+        this.mkdir(parent);
+        Object.keys(dirList).forEach(function  (key) {
+            this.mkdir(dirList[key]);
+        }.bind(this));
+    }.bind(this);
 
-    this.mkdir(this.baseDest);
-    this.mkdir(this.baseDest  + 'vendor');
-    this.mkdir(this.baseDest  + 'styles');
-    this.mkdir(this.baseDest  + 'scripts');
+    createDirs(this.baseSrc, this.sourceDir);
+    createDirs(this.baseDest, this.destDir);
 };
 
 AppBasicGenerator.prototype.copyTemplates = function () {
