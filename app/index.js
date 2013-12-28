@@ -16,52 +16,50 @@ var AppBasicGenerator = module.exports = function AppBasicGenerator(args, option
 
     this.on('end', function () {
         this.installDependencies({ skipInstall: options['skip-install'], callback: function () {
-            this.mkdir('src/styles/bootstrap');
             this.emit('dependenciesInstalled');
         }.bind(this)});
 
         this.on('dependenciesInstalled', function () {
             wiredep({
-                directory: 'public/vendor',
+                directory: this.destDir.vendor,
                 bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
                 exclude: [/sass-bootstrap/],
-                src: 'index.html'
+                ignorePath: 'public/',
+                src: this.baseDest + 'index.html'
             });
         });
     });
-
-
 };
 
 util.inherits(AppBasicGenerator, yeoman.generators.Base);
 
 AppBasicGenerator.prototype.setDefaults = function () {
-    var baseSrc = 'src/';
+    this.baseSrc = 'src/';
     this.sourceDir = {
-        scripts: baseSrc + 'scripts',
-        styles: baseSrc + 'styles',
-        templates: baseSrc + 'templates',
+        scripts: this.baseSrc + 'scripts',
+        styles: this.baseSrc + 'styles',
+        templates: this.baseSrc + 'templates',
     };
 
-    var baseDest = 'public/';
+    this.baseDest = 'public/';
     this.destDir = {
-        scripts: baseDest + 'scripts',
-        styles: baseDest + 'styles',
-        templates: baseDest + 'templates',
-        vendor: baseDest + 'vendor',
+        scripts: this.baseDest + 'scripts',
+        styles: this.baseDest + 'styles',
+        templates: this.baseDest + 'templates',
+        vendor: this.baseDest + 'vendor',
     };
 };
 
 AppBasicGenerator.prototype.setupFolders = function () {
-    this.mkdir('src');
-    this.mkdir('src/templates');
-    this.mkdir('src/styles');
-    this.mkdir('src/scripts');
+    this.mkdir(this.baseSrc);
+    this.mkdir(this.baseSrc + 'templates');
+    this.mkdir(this.baseSrc + 'styles');
+    this.mkdir(this.baseSrc + 'scripts');
 
-    this.mkdir('public');
-    this.mkdir('public/vendor');
-    this.mkdir('public/styles');
-    this.mkdir('public/scripts');
+    this.mkdir(this.baseDest);
+    this.mkdir(this.baseDest  + 'vendor');
+    this.mkdir(this.baseDest  + 'styles');
+    this.mkdir(this.baseDest  + 'scripts');
 };
 
 AppBasicGenerator.prototype.copyTemplates = function () {
@@ -78,6 +76,6 @@ AppBasicGenerator.prototype.copyGrunt = function () {
 };
 
 AppBasicGenerator.prototype.copyInitialFiles = function () {
-    this.template('index.html', 'index.html');
-    this.directory('styles', 'src/styles');
+    this.template('index.html', this.baseDest + 'index.html');
+    this.directory('styles', this.baseSrc + 'styles');
 };
