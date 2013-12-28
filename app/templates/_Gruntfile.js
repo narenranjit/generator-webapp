@@ -112,22 +112,6 @@ module.exports = function (grunt) {
                     relativeAssets: true
                 }
             }
-        },
-
-        'bower-install': {
-            target: {
-                // Point to the files that should be updated when
-                // you run `grunt bower-install`
-                src: ['index.html'],
-
-                cwd: '',
-                ignorePath: '',
-                exclude: [],
-                fileTypes: {}
-            }
-        },
-        concat: {
-
         }
     });
 
@@ -135,10 +119,4 @@ module.exports = function (grunt) {
 
 
     grunt.registerTask('default', ['watch']);
-
-    grunt.registerTask('debug', ['jst', 'concat']);
-
-    // The release task will run the debug tasks and then minify the
-    // dist/debug/require.js file and CSS files.
-    grunt.registerTask('release', ['debug', 'min']);
 };

@@ -1,6 +1,8 @@
 'use strict';
 var util = require('util');
 var path = require('path');
+var fs = require('fs');
+var wiredep = require('wiredep');
 var yeoman = require('yeoman-generator');
 
 var AppBasicGenerator = module.exports = function AppBasicGenerator(args, options, config) {
@@ -11,6 +13,24 @@ var AppBasicGenerator = module.exports = function AppBasicGenerator(args, option
     this.appname = this._.camelize(this._.slugify(this._.humanize(this.appname)));
 
     this.pkg = JSON.parse(this.readFileAsString(path.join(__dirname, '../package.json')));
+
+    this.on('end', function () {
+        this.installDependencies({ skipInstall: options['skip-install'], callback: function () {
+            this.mkdir('src/styles/bootstrap');
+            this.emit('dependenciesInstalled');
+        }.bind(this)});
+
+        this.on('dependenciesInstalled', function () {
+            wiredep({
+                directory: 'public/vendor',
+                bowerJson: JSON.parse(fs.readFileSync('./bower.json')),
+                exclude: [/sass-bootstrap/],
+                src: 'index.html'
+            });
+        });
+    });
+
+
 };
 
 util.inherits(AppBasicGenerator, yeoman.generators.Base);

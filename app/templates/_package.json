@@ -9,7 +9,6 @@
     "grunt-contrib-compass": "*",
     "grunt-contrib-jst": "*",
     "grunt-contrib-watch": "*",
-    "grunt-contrib-concat": "*",
     "grunt-contrib-connect": "*",
     "grunt-open": "*",
     "connect-livereload": "*",
